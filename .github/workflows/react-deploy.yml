@@ -1,0 +1,36 @@
+name: CI Deployment for React App 
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    # Install NodeJS
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2-beta
+      with:
+        version: 12
+        
+    # Install Surge
+    - name: Installing Surge
+      run: npm install --global surge
+
+    # Install Yarn
+    - name: Installing Yarn
+      uses: borales/actions-yarn@v2.0.0
+      with:
+        cmd: install # will run `yarn install` command
+        
+    # Build App
+    - name: Building React Application
+      run: yarn build
+
+    # Deploy App
+    - name: Deploying App
+      run: surge ./ simple-react-app.sh --token ${{ secrets.SURGE_TOKEN }}
